@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Travel Booking{% endblock %}
+{% block description %}Learn about Travel Booking platform, our mission, vision, and commitment to providing excellent travel booking services.{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">About Us</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4">About Travel Booking</h1>
+                <p class="lead">
+                    We're on a mission to make travel booking simple, secure, and accessible for everyone. 
+                    Since our inception, we've been committed to connecting travelers with their dream destinations.
+                </p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-globe fa-8x opacity-50"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">Our Story</h2>
+                <p class="mb-3">
+                    Founded in 2024, Travel Booking emerged from a simple idea: travel booking should be 
+                    effortless and transparent. Our founders, passionate travelers themselves, experienced 
+                    the frustration of complex booking processes and hidden fees.
+                </p>
+                <p class="mb-3">
+                    Today, we serve thousands of customers across India, offering seamless booking experiences 
+                    for flights, trains, and buses. Our platform combines cutting-edge technology with 
+                    personalized customer service.
+                </p>
+                <p>
+                    We believe that everyone deserves to explore the world without worrying about the 
+                    complexities of travel planning.
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="card text-center border-0 bg-light h-100">
+                            <div class="card-body">
+                                <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                                <h4>50K+</h4>
+                                <p class="text-muted mb-0">Bookings Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card text-center border-0 bg-light h-100">
+                            <div class="card-body">
+                                <i class="fas fa-users fa-3x text-success mb-3"></i>
+                                <h4>25K+</h4>
+                                <p class="text-muted mb-0">Happy Customers</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card text-center border-0 bg-light h-100">
+                            <div class="card-body">
+                                <i class="fas fa-map-marker-alt fa-3x text-info mb-3"></i>
+                                <h4>100+</h4>
+                                <p class="text-muted mb-0">Destinations</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card text-center border-0 bg-light h-100">
+                            <div class="card-body">
+                                <i class="fas fa-handshake fa-3x text-warning mb-3"></i>
+                                <h4>200+</h4>
+                                <p class="text-muted mb-0">Travel Partners</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission, Vision, Values -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card border-0 h-100 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-bullseye fa-3x text-primary mb-3"></i>
+                        <h3 class="fw-bold mb-3">Our Mission</h3>
+                        <p>
+                            To democratize travel by making booking simple, transparent, and accessible 
+                            to everyone, regardless of their technical expertise or economic background.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 h-100 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-eye fa-3x text-success mb-3"></i>
+                        <h3 class="fw-bold mb-3">Our Vision</h3>
+                        <p>
+                            To become the most trusted and user-friendly travel booking platform in India, 
+                            connecting millions of travelers with unforgettable experiences.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 h-100 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                        <h3 class="fw-bold mb-3">Our Values</h3>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Customer First</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Transparency</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Innovation</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Reliability</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Integrity</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Why Choose Travel Booking?</h2>
+            <p class="lead text-muted">We're committed to providing you with the best travel booking experience</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-shield-alt fa-lg"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h5 class="fw-bold">Secure & Safe</h5>
+                        <p class="text-muted">Your personal and payment information is protected with bank-level security measures and SSL encryption.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-start mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-clock fa-lg"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h5 class="fw-bold">24/7 Support</h5>
+                        <p class="text-muted">Our customer support team is available round the clock to assist you with any queries or issues.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-start">
+                    <div class="flex-shrink-0">
+                        <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-bolt fa-lg"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h5 class="fw-bold">Instant Confirmation</h5>
+                        <p class="text-muted">Get immediate booking confirmation with e-tickets sent directly to your email and mobile.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-tag fa-lg"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h5 class="fw-bold">Best Prices</h5>
+                        <p class="text-muted">Compare prices across multiple operators and find the best deals for your travel needs.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-start mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-mobile-alt fa-lg"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h5 class="fw-bold">Mobile Friendly</h5>
+                        <p class="text-muted">Book on-the-go with our responsive design that works seamlessly on all devices.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-start">
+                    <div class="flex-shrink-0">
+                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-undo fa-lg"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h5 class="fw-bold">Easy Cancellation</h5>
+                        <p class="text-muted">Flexible cancellation policies with hassle-free refund processing when plans change.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Our Leadership Team</h2>
+            <p class="lead text-muted">Meet the passionate individuals behind Travel Booking</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold">Rajesh Kumar</h5>
+                        <p class="text-muted mb-2">CEO & Co-Founder</p>
+                        <p class="small">Former product manager at leading tech companies with 10+ years of experience in travel technology.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold">Priya Sharma</h5>
+                        <p class="text-muted mb-2">CTO & Co-Founder</p>
+                        <p class="small">Technology expert with deep expertise in scalable web applications and user experience design.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold">Amit Patel</h5>
+                        <p class="text-muted mb-2">Head of Operations</p>
+                        <p class="small">Operations specialist ensuring smooth customer experience and vendor relationship management.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-3">Ready to Start Your Journey?</h2>
+        <p class="lead mb-4">Join thousands of satisfied customers who trust Travel Booking for their travel needs.</p>
+        <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+            <a href="{% url 'travel:search' %}" class="btn btn-light btn-lg">
+                <i class="fas fa-search me-2"></i>Search Travel Options
+            </a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Create Account
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

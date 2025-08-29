@@ -1,0 +1,424 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Account - Travel Booking{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        padding: 2rem 0;
+    }
+    
+    .register-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .register-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .register-form {
+        padding: 2rem;
+    }
+    
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+    
+    .step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+    }
+    
+    .step.active .step-number {
+        background: #667eea;
+        color: white;
+    }
+    
+    .step.completed .step-number {
+        background: #28a745;
+        color: white;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        color: #6c757d;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .step-title {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+    
+    .step.active .step-title,
+    .step.completed .step-title {
+        color: #495057;
+        font-weight: 500;
+    }
+    
+    .password-requirements {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .requirement {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.25rem;
+    }
+    
+    .requirement.met {
+        color: #28a745;
+    }
+    
+    .requirement.unmet {
+        color: #dc3545;
+    }
+    
+    .benefits-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .benefits-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .benefits-list i {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container register-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="register-card">
+                <!-- Header -->
+                <div class="register-header">
+                    <i class="fas fa-user-plus fa-3x mb-3"></i>
+                    <h2 class="fw-bold mb-2">Join Travel Booking</h2>
+                    <p class="mb-0">Create your account and start your journey with us</p>
+                </div>
+                
+                <div class="row g-0">
+                    <!-- Left Side - Form -->
+                    <div class="col-lg-8 register-form">
+                        <!-- Progress Steps -->
+                        <div class="progress-steps">
+                            <div class="step active">
+                                <div class="step-number">1</div>
+                                <div class="step-title">Account Details</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-title">Verification</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-title">Welcome</div>
+                            </div>
+                        </div>
+                        
+                        <form method="post" class="needs-validation" novalidate id="registerForm">
+                            {% csrf_token %}
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                        <i class="fas fa-user me-2"></i>First Name
+                                    </label>
+                                    {{ form.first_name }}
+                                    {% if form.first_name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.first_name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                        <i class="fas fa-user me-2"></i>Last Name
+                                    </label>
+                                    {{ form.last_name }}
+                                    {% if form.last_name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.last_name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.username.id_for_label }}" class="form-label">
+                                    <i class="fas fa-at me-2"></i>Username
+                                </label>
+                                {{ form.username }}
+                                <div class="form-text">Choose a unique username (3-30 characters)</div>
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.username.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                {{ form.email }}
+                                <div class="form-text">We'll send booking confirmations to this email</div>
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>Phone Number
+                                </label>
+                                {{ form.phone_number }}
+                                <div class="form-text">Include country code (e.g., +91 9876543210)</div>
+                                {% if form.phone_number.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.phone_number.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password1.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="password-requirements" id="passwordRequirements">
+                                    <div class="fw-bold mb-2">Password Requirements:</div>
+                                    <div class="requirement unmet" id="req-length">
+                                        <i class="fas fa-times me-2"></i>At least 8 characters
+                                    </div>
+                                    <div class="requirement unmet" id="req-upper">
+                                        <i class="fas fa-times me-2"></i>One uppercase letter
+                                    </div>
+                                    <div class="requirement unmet" id="req-lower">
+                                        <i class="fas fa-times me-2"></i>One lowercase letter
+                                    </div>
+                                    <div class="requirement unmet" id="req-number">
+                                        <i class="fas fa-times me-2"></i>One number
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Confirm Password
+                                </label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password2.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                    <label class="form-check-label" for="agreeTerms">
+                                        I agree to the <a href="{% url 'terms' %}" target="_blank">Terms of Service</a> 
+                                        and <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="newsletter">
+                                    <label class="form-check-label" for="newsletter">
+                                        Subscribe to our newsletter for travel deals and updates
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </form>
+                        
+                        <div class="text-center">
+                            <p class="text-muted">
+                                Already have an account? 
+                                <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-bold">
+                                    Sign in here
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side - Benefits -->
+                    <div class="col-lg-4" style="background: #f8f9fa; padding: 2rem;">
+                        <h5 class="fw-bold mb-3">Why Join Us?</h5>
+                        <ul class="benefits-list">
+                            <li>
+                                <i class="fas fa-ticket-alt"></i>
+                                <div>
+                                    <strong>Easy Booking</strong><br>
+                                    <small class="text-muted">Book flights, trains, and buses in seconds</small>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-shield-alt"></i>
+                                <div>
+                                    <strong>Secure Payments</strong><br>
+                                    <small class="text-muted">Your payment information is always protected</small>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <strong>24/7 Support</strong><br>
+                                    <small class="text-muted">Get help whenever you need it</small>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-mobile-alt"></i>
+                                <div>
+                                    <strong>Mobile Friendly</strong><br>
+                                    <small class="text-muted">Manage bookings on any device</small>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-tag"></i>
+                                <div>
+                                    <strong>Exclusive Deals</strong><br>
+                                    <small class="text-muted">Access to member-only discounts</small>
+                                </div>
+                            </li>
+                        </ul>
+                        
+                        <div class="mt-4 p-3 bg-white rounded">
+                            <div class="text-center">
+                                <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                <div class="fw-bold">Join 50,000+ travelers</div>
+                                <small class="text-muted">who trust us with their journeys</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Password requirements checker
+        $('#id_password1').on('input', function() {
+            const password = $(this).val();
+            
+            // Check length
+            if (password.length >= 8) {
+                updateRequirement('req-length', true);
+            } else {
+                updateRequirement('req-length', false);
+            }
+            
+            // Check uppercase
+            if (/[A-Z]/.test(password)) {
+                updateRequirement('req-upper', true);
+            } else {
+                updateRequirement('req-upper', false);
+            }
+            
+            // Check lowercase
+            if (/[a-z]/.test(password)) {
+                updateRequirement('req-lower', true);
+            } else {
+                updateRequirement('req-lower', false);
+            }
+            
+            // Check number
+            if (/\d/.test(password)) {
+                updateRequirement('req-number', true);
+            } else {
+                updateRequirement('req-number', false);
+            }
+        });
+        
+        function updateRequirement(id, met) {
+            const element = $('#' + id);
+            if (met) {
+                element.removeClass('unmet').addClass('met');
+                element.find('i').removeClass('fa-times').addClass('fa-check');
+            } else {
+                element.removeClass('met').addClass('unmet');
+                element.find('i').removeClass('fa-check').addClass('fa-times');
+            }
+        }
+        
+        // Form validation
+        $('#registerForm').on('submit', function(e) {
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            $(this).addClass('was-validated');
+        });
+        
+        // Username availability check (debounced)
+        let usernameTimeout;
+        $('#id_username').on('input', function() {
+            clearTimeout(usernameTimeout);
+            const username = $(this).val();
+            
+            if (username.length >= 3) {
+                usernameTimeout = setTimeout(function() {
+                    // In a real app, you'd make an AJAX call to check availability
+                    console.log('Checking username availability:', username);
+                }, 500);
+            }
+        });
+    });
+</script>
+{% endblock %}

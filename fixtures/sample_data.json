@@ -1,0 +1,184 @@
+[
+  {
+    "model": "travel.traveloption",
+    "pk": 1,
+    "fields": {
+      "travel_type": "FLIGHT",
+      "operator_name": "IndiGo",
+      "source": "Mumbai",
+      "destination": "Delhi",
+      "source_code": "BOM",
+      "destination_code": "DEL",
+      "departure_datetime": "2024-12-25T06:00:00Z",
+      "arrival_datetime": "2024-12-25T08:15:00Z",
+      "base_price": "6500.00",
+      "available_seats": 180,
+      "total_seats": 180,
+      "description": "Non-stop flight from Mumbai to Delhi with complimentary refreshments.",
+      "amenities": "WiFi, Entertainment, Meals",
+      "status": "ACTIVE",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel.traveloption",
+    "pk": 2,
+    "fields": {
+      "travel_type": "TRAIN",
+      "operator_name": "Indian Railways - Rajdhani Express",
+      "source": "Mumbai",
+      "destination": "Delhi",
+      "source_code": "CSMT",
+      "destination_code": "NDLS",
+      "departure_datetime": "2024-12-25T16:05:00Z",
+      "arrival_datetime": "2024-12-26T08:35:00Z",
+      "base_price": "2850.00",
+      "available_seats": 400,
+      "total_seats": 400,
+      "description": "Premium express train with AC accommodation and meals included.",
+      "amenities": "AC, Meals, Bedding, Charging Points",
+      "status": "ACTIVE",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel.traveloption",
+    "pk": 3,
+    "fields": {
+      "travel_type": "BUS",
+      "operator_name": "Volvo Multi-Axle",
+      "source": "Mumbai",
+      "destination": "Goa",
+      "source_code": "MUM",
+      "destination_code": "GOA",
+      "departure_datetime": "2024-12-25T22:00:00Z",
+      "arrival_datetime": "2024-12-26T10:00:00Z",
+      "base_price": "1200.00",
+      "available_seats": 45,
+      "total_seats": 49,
+      "description": "Comfortable overnight bus journey to Goa with reclining seats.",
+      "amenities": "AC, Reclining Seats, Blanket, Water Bottle",
+      "status": "ACTIVE",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel.traveloption",
+    "pk": 4,
+    "fields": {
+      "travel_type": "FLIGHT",
+      "operator_name": "Air India",
+      "source": "Delhi",
+      "destination": "Bangalore",
+      "source_code": "DEL",
+      "destination_code": "BLR",
+      "departure_datetime": "2024-12-26T09:30:00Z",
+      "arrival_datetime": "2024-12-26T12:15:00Z",
+      "base_price": "8900.00",
+      "available_seats": 150,
+      "total_seats": 180,
+      "description": "Direct flight to Bangalore, the Silicon Valley of India.",
+      "amenities": "WiFi, Entertainment, Complimentary Snacks",
+      "status": "ACTIVE",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel.traveloption",
+    "pk": 5,
+    "fields": {
+      "travel_type": "TRAIN",
+      "operator_name": "Indian Railways - Shatabdi Express",
+      "source": "Delhi",
+      "destination": "Chandigarh",
+      "source_code": "NDLS",
+      "destination_code": "CDG",
+      "departure_datetime": "2024-12-26T07:20:00Z",
+      "arrival_datetime": "2024-12-26T10:45:00Z",
+      "base_price": "1650.00",
+      "available_seats": 300,
+      "total_seats": 350,
+      "description": "Fast day train to Chandigarh with breakfast and dinner included.",
+      "amenities": "AC, Meals, Charging Points, Reading Light",
+      "status": "ACTIVE",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel.traveloption",
+    "pk": 6,
+    "fields": {
+      "travel_type": "BUS",
+      "operator_name": "RedBus Sleeper",
+      "source": "Bangalore",
+      "destination": "Chennai",
+      "source_code": "BLR",
+      "destination_code": "CHN",
+      "departure_datetime": "2024-12-26T23:30:00Z",
+      "arrival_datetime": "2024-12-27T05:30:00Z",
+      "base_price": "800.00",
+      "available_seats": 32,
+      "total_seats": 36,
+      "description": "Comfortable sleeper bus for overnight journey to Chennai.",
+      "amenities": "AC, Sleeper Berth, Pillow, Blanket",
+      "status": "ACTIVE",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel.popularroute",
+    "pk": 1,
+    "fields": {
+      "source": "Mumbai",
+      "destination": "Delhi",
+      "search_count": 1250,
+      "booking_count": 380
+    }
+  },
+  {
+    "model": "travel.popularroute",
+    "pk": 2,
+    "fields": {
+      "source": "Mumbai",
+      "destination": "Goa",
+      "search_count": 890,
+      "booking_count": 290
+    }
+  },
+  {
+    "model": "travel.popularroute",
+    "pk": 3,
+    "fields": {
+      "source": "Delhi",
+      "destination": "Bangalore",
+      "search_count": 750,
+      "booking_count": 220
+    }
+  },
+  {
+    "model": "travel.popularroute",
+    "pk": 4,
+    "fields": {
+      "source": "Delhi",
+      "destination": "Chandigarh",
+      "search_count": 650,
+      "booking_count": 180
+    }
+  },
+  {
+    "model": "travel.popularroute",
+    "pk": 5,
+    "fields": {
+      "source": "Bangalore",
+      "destination": "Chennai",
+      "search_count": 540,
+      "booking_count": 160
+    }
+  }
+]

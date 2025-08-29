@@ -1,0 +1,579 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Your Travel - Travel Booking{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'travel:search' %}">Search Travel</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'travel:detail' travel_option.pk %}">{{ travel_option.source }} to {{ travel_option.destination }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Book Now</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .booking-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+    }
+    
+    .booking-form {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .travel-summary {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        border-left: 4px solid #667eea;
+    }
+    
+    .price-breakdown {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .route-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .route-arrow {
+        margin: 0 1rem;
+        color: #6c757d;
+    }
+    
+    .travel-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 1rem;
+    }
+    
+    .travel-icon.flight { background: #3498db; }
+    .travel-icon.train { background: #2ecc71; }
+    .travel-icon.bus { background: #f39c12; }
+    
+    .passenger-form {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .passenger-form.active {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+    }
+    
+    .passenger-header {
+        background: #667eea;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+    
+    .booking-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+    
+    .booking-step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        padding: 0 1rem;
+    }
+    
+    .booking-step::after {
+        content: '';
+        position: absolute;
+        top: 15px;
+        right: -50%;
+        width: 100%;
+        height: 2px;
+        background: #e9ecef;
+        z-index: 1;
+    }
+    
+    .booking-step:last-child::after {
+        display: none;
+    }
+    
+    .booking-step.active::after {
+        background: #667eea;
+    }
+    
+    .step-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #e9ecef;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .booking-step.active .step-icon {
+        background: #667eea;
+        color: white;
+    }
+    
+    .booking-step.completed .step-icon {
+        background: #28a745;
+        color: white;
+    }
+    
+    .terms-checkbox {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .payment-method {
+        text-align: center;
+        padding: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .payment-method:hover,
+    .payment-method.selected {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+    }
+    
+    .payment-icon {
+        font-size: 1.5rem;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Booking Header -->
+    <div class="booking-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="fw-bold mb-2">Complete Your Booking</h1>
+                    <p class="lead mb-0">You're just a few steps away from your journey</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="d-inline-block bg-white bg-opacity-10 rounded-pill px-3 py-2">
+                        <i class="fas fa-lock me-2"></i>
+                        Secure Booking
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Booking Steps -->
+    <div class="booking-steps">
+        <div class="booking-step active">
+            <div class="step-icon">1</div>
+            <small>Travel Details</small>
+        </div>
+        <div class="booking-step">
+            <div class="step-icon">2</div>
+            <small>Passenger Info</small>
+        </div>
+        <div class="booking-step">
+            <div class="step-icon">3</div>
+            <small>Payment</small>
+        </div>
+        <div class="booking-step">
+            <div class="step-icon">4</div>
+            <small>Confirmation</small>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Main Booking Form -->
+        <div class="col-lg-8">
+            <form method="post" id="bookingForm">
+                {% csrf_token %}
+                
+                <!-- Passenger Information -->
+                <div class="booking-form">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-users text-primary me-2"></i>Passenger Information
+                    </h5>
+                    
+                    <!-- Number of Passengers -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                {{ form.number_of_seats }}
+                                <label for="id_number_of_seats">Number of Passengers</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dynamic Passenger Forms -->
+                    <div id="passengerForms">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <h6 class="fw-bold mb-3 mt-4">Contact Information</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.contact_email }}
+                                <label for="id_contact_email">Email Address</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                {{ form.contact_phone }}
+                                <label for="id_contact_phone">Phone Number</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Special Requests -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-floating">
+                                {{ form.special_requests }}
+                                <label for="id_special_requests">Special Requests (Optional)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Terms and Conditions -->
+                <div class="booking-form">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-file-contract text-primary me-2"></i>Terms & Conditions
+                    </h5>
+                    
+                    <div class="terms-checkbox">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                I agree to the <a href="#" class="text-primary">Terms and Conditions</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="agreeCancellation" required>
+                            <label class="form-check-label" for="agreeCancellation">
+                                I understand the cancellation policy for this booking
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Buttons -->
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'travel:detail' travel_option.pk %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Details
+                    </a>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-credit-card me-2"></i>Proceed to Payment
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Booking Summary Sidebar -->
+        <div class="col-lg-4">
+            <!-- Travel Summary -->
+            <div class="travel-summary">
+                <h5 class="fw-bold mb-3">Booking Summary</h5>
+                
+                <!-- Route Information -->
+                <div class="route-info">
+                    <div class="travel-icon {{ travel_option.travel_type|lower }}">
+                        <i class="fas fa-{% if travel_option.travel_type == 'FLIGHT' %}plane{% elif travel_option.travel_type == 'TRAIN' %}train{% else %}bus{% endif %}"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">{{ travel_option.operator_name }}</h6>
+                        <small class="text-muted">{{ travel_option.get_travel_type_display }}</small>
+                    </div>
+                </div>
+                
+                <div class="route-info">
+                    <div>
+                        <h6 class="mb-0">{{ travel_option.source }}</h6>
+                        <small class="text-muted">{{ travel_option.departure_datetime|date:"M d, Y g:i A" }}</small>
+                    </div>
+                    <div class="route-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">{{ travel_option.destination }}</h6>
+                        <small class="text-muted">{{ travel_option.arrival_datetime|date:"M d, Y g:i A" }}</small>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <!-- Booking Details -->
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Travel ID:</span>
+                    <span class="fw-bold">{{ travel_option.travel_id }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Duration:</span>
+                    <span class="fw-bold">{{ travel_option.duration }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Available Seats:</span>
+                    <span class="fw-bold text-success">{{ travel_option.available_seats }}</span>
+                </div>
+            </div>
+            
+            <!-- Price Breakdown -->
+            <div class="price-breakdown">
+                <h6 class="fw-bold mb-3">Price Breakdown</h6>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Base Price (per person):</span>
+                    <span>₹<span id="basePrice">{{ travel_option.base_price|floatformat:0 }}</span></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Number of Passengers:</span>
+                    <span id="passengerCount">1</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span>₹<span id="subtotal">{{ travel_option.base_price|floatformat:0 }}</span></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-muted">
+                    <small>Taxes & Fees:</small>
+                    <small>₹<span id="taxes">0</span></small>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fw-bold h5">
+                    <span>Total Amount:</span>
+                    <span class="text-primary">₹<span id="totalAmount">{{ travel_option.base_price|floatformat:0 }}</span></span>
+                </div>
+            </div>
+            
+            <!-- Important Information -->
+            <div class="travel-summary">
+                <h6 class="fw-bold mb-3">
+                    <i class="fas fa-info-circle text-info me-2"></i>Important Information
+                </h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        <small>Free cancellation up to 24 hours before departure</small>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        <small>Instant booking confirmation</small>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        <small>Mobile tickets accepted</small>
+                    </li>
+                    <li class="mb-0">
+                        <i class="fas fa-shield-alt text-primary me-2"></i>
+                        <small>Secure payment processing</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script id="user-data" type="application/json">
+{
+    "email": "{{ user.email|escapejs|default:'' }}",
+    "phone": "{{ user.phone_number|escapejs|default:'' }}"
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const seatsField = document.getElementById('id_number_of_seats');
+    const passengerFormsContainer = document.getElementById('passengerForms');
+    const basePrice = parseFloat(document.getElementById('basePrice').textContent);
+    
+    // Initialize with 1 passenger
+    updatePassengerForms(1);
+    
+    // Listen for changes in number of seats
+    seatsField.addEventListener('change', function() {
+        const numSeats = parseInt(this.value) || 1;
+        updatePassengerForms(numSeats);
+        updatePricing(numSeats);
+    });
+    
+    function updatePassengerForms(numSeats) {
+        passengerFormsContainer.innerHTML = '';
+        
+        for (let i = 1; i <= numSeats; i++) {
+            const passengerForm = createPassengerForm(i);
+            passengerFormsContainer.appendChild(passengerForm);
+        }
+    }
+    
+    function createPassengerForm(passengerNumber) {
+        const formDiv = document.createElement('div');
+        formDiv.className = 'passenger-form';
+        formDiv.innerHTML = `
+            <div class="passenger-header">
+                <i class="fas fa-user me-2"></i>Passenger ${passengerNumber}
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        <select class="form-select" name="passenger_${passengerNumber}_title" required>
+                            <option value="">Select</option>
+                            <option value="MR">Mr.</option>
+                            <option value="MRS">Mrs.</option>
+                            <option value="MS">Ms.</option>
+                            <option value="DR">Dr.</option>
+                        </select>
+                        <label>Title</label>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="passenger_${passengerNumber}_first_name" placeholder="First Name" required>
+                        <label>First Name</label>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="passenger_${passengerNumber}_last_name" placeholder="Last Name" required>
+                        <label>Last Name</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="date" class="form-control" name="passenger_${passengerNumber}_date_of_birth" required>
+                        <label>Date of Birth</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <select class="form-select" name="passenger_${passengerNumber}_gender" required>
+                            <option value="">Select</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="O">Other</option>
+                        </select>
+                        <label>Gender</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="passenger_${passengerNumber}_id_number" placeholder="ID Number" required>
+                        <label>ID Number</label>
+                    </div>
+                </div>
+            </div>
+        `;
+        return formDiv;
+    }
+    
+    function updatePricing(numSeats) {
+        const subtotal = basePrice * numSeats;
+        const taxes = Math.round(subtotal * 0.05); // 5% tax
+        const total = subtotal + taxes;
+        
+        document.getElementById('passengerCount').textContent = numSeats;
+        document.getElementById('subtotal').textContent = subtotal.toFixed(0);
+        document.getElementById('taxes').textContent = taxes.toFixed(0);
+        document.getElementById('totalAmount').textContent = total.toFixed(0);
+    }
+    
+    // Form validation
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+        }
+    });
+    
+    // Auto-fill contact info from user profile (if logged in)
+    const emailField = document.getElementById('id_contact_email');
+    const phoneField = document.getElementById('id_contact_phone');
+    
+    // Get user data from JSON script with error handling
+    let userData = { email: '', phone: '' };
+    try {
+        const userDataElement = document.getElementById('user-data');
+        if (userDataElement) {
+            userData = JSON.parse(userDataElement.textContent);
+        }
+    } catch (e) {
+        console.log('Could not parse user data');
+    }
+    
+    if (emailField && userData.email) {
+        emailField.value = userData.email;
+    }
+    if (phoneField && userData.phone) {
+        phoneField.value = userData.phone;
+    }
+});
+</script>
+{% endblock %}

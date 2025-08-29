@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Travel Booking{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+    }
+    
+    .stats-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-left: 4px solid transparent;
+        height: 100%;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stats-card.total { border-left-color: #667eea; }
+    .stats-card.confirmed { border-left-color: #28a745; }
+    .stats-card.pending { border-left-color: #ffc107; }
+    .stats-card.completed { border-left-color: #17a2b8; }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-label {
+        color: #6c757d;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-change {
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .stats-change.positive { color: #28a745; }
+    .stats-change.negative { color: #dc3545; }
+    
+    .quick-actions {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .action-button {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #495057;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        margin-bottom: 0.5rem;
+    }
+    
+    .action-button:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+        color: #667eea;
+        transform: translateX(5px);
+    }
+    
+    .action-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+    }
+    
+    .upcoming-trips {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .trip-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    
+    .trip-item:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+    
+    .trip-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: white;
+        font-size: 1.25rem;
+    }
+    
+    .trip-icon.flight { background: #3498db; }
+    .trip-icon.train { background: #2ecc71; }
+    .trip-icon.bus { background: #f39c12; }
+    
+    .trip-details {
+        flex: 1;
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .profile-summary {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        border: 4px solid white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .member-since {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="fw-bold mb-2">
+                        Welcome back, {{ user.get_full_name|default:user.username }}! 👋
+                    </h1>
+                    <p class="lead mb-0">Here's what's happening with your travel bookings</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="d-inline-block bg-white bg-opacity-10 rounded-pill px-3 py-2">
+                        <i class="fas fa-calendar me-2"></i>
+                        {{ "now"|date:"F j, Y" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card total">
+                <div class="stats-number text-primary">{{ total_bookings }}</div>
+                <div class="stats-label">Total Bookings</div>
+                <div class="stats-change positive">
+                    <i class="fas fa-arrow-up me-1"></i>All time
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card confirmed">
+                <div class="stats-number text-success">{{ confirmed_bookings }}</div>
+                <div class="stats-label">Confirmed Trips</div>
+                <div class="stats-change positive">
+                    <i class="fas fa-check-circle me-1"></i>Ready to travel
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card pending">
+                <div class="stats-number text-warning">{{ pending_bookings }}</div>
+                <div class="stats-label">Pending</div>
+                <div class="stats-change">
+                    <i class="fas fa-clock me-1"></i>Awaiting confirmation
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card completed">
+                <div class="stats-number text-info">{{ completed_bookings }}</div>
+                <div class="stats-label">Completed</div>
+                <div class="stats-change positive">
+                    <i class="fas fa-flag-checkered me-1"></i>Journeys finished
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Quick Actions -->
+            <div class="quick-actions mb-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-bolt text-primary me-2"></i>Quick Actions
+                </h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{% url 'travel:search' %}" class="action-button">
+                            <div class="action-icon" style="background: #667eea;">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Search Travel</div>
+                                <small class="text-muted">Find your next journey</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'bookings:list' %}" class="action-button">
+                            <div class="action-icon" style="background: #28a745;">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">View Bookings</div>
+                                <small class="text-muted">Manage your trips</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'accounts:profile' %}" class="action-button">
+                            <div class="action-icon" style="background: #17a2b8;">
+                                <i class="fas fa-user-edit"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Edit Profile</div>
+                                <small class="text-muted">Update your information</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="#" class="action-button">
+                            <div class="action-icon" style="background: #ffc107;">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">Get Help</div>
+                                <small class="text-muted">Support & FAQs</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upcoming Trips -->
+            {% if upcoming_trips %}
+            <div class="upcoming-trips mb-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-calendar-alt text-primary me-2"></i>Upcoming Trips
+                </h5>
+                {% for booking in upcoming_trips %}
+                <div class="trip-item">
+                    <div class="trip-icon {% if booking.travel_option.travel_type == 'FLIGHT' %}flight{% elif booking.travel_option.travel_type == 'TRAIN' %}train{% else %}bus{% endif %}">
+                        <i class="fas fa-{% if booking.travel_option.travel_type == 'FLIGHT' %}plane{% elif booking.travel_option.travel_type == 'TRAIN' %}train{% else %}bus{% endif %}"></i>
+                    </div>
+                    <div class="trip-details">
+                        <div class="fw-bold">
+                            {{ booking.travel_option.source }} → {{ booking.travel_option.destination }}
+                        </div>
+                        <div class="text-muted small">
+                            {{ booking.travel_option.departure_datetime|date:"M d, Y g:i A" }} • 
+                            {{ booking.number_of_seats }} passenger{{ booking.number_of_seats|pluralize }}
+                        </div>
+                        <div class="small">
+                            <span class="badge bg-success">{{ booking.get_status_display }}</span>
+                            <span class="text-muted ms-2">Booking ID: {{ booking.booking_id }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{% url 'bookings:detail' booking.booking_id %}" class="btn btn-outline-primary btn-sm">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'bookings:list' %}?status=CONFIRMED" class="btn btn-outline-primary">
+                        View All Confirmed Bookings
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Recent Activity -->
+            <div class="chart-container">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-chart-line text-primary me-2"></i>Booking Activity
+                </h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="travelTypesChart" height="200"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="monthlyBookingsChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Bookings -->
+            {% if recent_bookings %}
+            <div class="chart-container">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-history text-primary me-2"></i>Recent Bookings
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Route</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in recent_bookings %}
+                            <tr>
+                                <td class="fw-bold">{{ booking.booking_id }}</td>
+                                <td>
+                                    {{ booking.travel_option.source }} → {{ booking.travel_option.destination }}
+                                    <br><small class="text-muted">{{ booking.travel_option.get_travel_type_display }}</small>
+                                </td>
+                                <td>{{ booking.travel_option.departure_datetime|date:"M d, Y" }}</td>
+                                <td>₹{{ booking.total_price|floatformat:0 }}</td>
+                                <td>
+                                    <span class="badge bg-{% if booking.status == 'CONFIRMED' %}success{% elif booking.status == 'PENDING' %}warning{% elif booking.status == 'CANCELLED' %}danger{% else %}info{% endif %}">
+                                        {{ booking.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'bookings:detail' booking.booking_id %}" class="btn btn-sm btn-outline-primary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <a href="{% url 'bookings:list' %}" class="btn btn-outline-primary">
+                        View All Bookings
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Profile Summary -->
+            <div class="profile-summary mb-4">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profile" class="profile-avatar">
+                {% else %}
+                    <div class="profile-avatar bg-primary d-flex align-items-center justify-content-center">
+                        <i class="fas fa-user fa-2x text-white"></i>
+                    </div>
+                {% endif %}
+                
+                <h6 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h6>
+                <div class="member-since mb-3">
+                    Member since {{ user.date_joined|date:"F Y" }}
+                </div>
+                
+                <div class="row text-center mb-3">
+                    <div class="col-4">
+                        <div class="fw-bold text-primary">₹{{ total_spent|floatformat:0 }}</div>
+                        <small class="text-muted">Total Spent</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold text-success">{{ completed_bookings }}</div>
+                        <small class="text-muted">Completed</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold text-info">{{ total_bookings }}</div>
+                        <small class="text-muted">Total Trips</small>
+                    </div>
+                </div>
+                
+                <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit me-2"></i>Edit Profile
+                </a>
+            </div>
+            
+            <!-- Travel Preferences -->
+            <div class="chart-container mb-4">
+                <h6 class="fw-bold mb-3">
+                    <i class="fas fa-heart text-danger me-2"></i>Travel Preferences
+                </h6>
+                {% for stat in travel_stats %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <i class="fas fa-{% if stat.travel_option__travel_type == 'FLIGHT' %}plane{% elif stat.travel_option__travel_type == 'TRAIN' %}train{% else %}bus{% endif %} me-2"></i>
+                        {{ stat.travel_option__travel_type|title }}
+                    </div>
+                    <span class="badge bg-light text-dark">{{ stat.count }}</span>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center">No travel history yet</p>
+                {% endfor %}
+            </div>
+            
+            <!-- Support -->
+            <div class="chart-container">
+                <h6 class="fw-bold mb-3">
+                    <i class="fas fa-headset text-info me-2"></i>Need Help?
+                </h6>
+                <p class="text-muted mb-3">Our support team is here to help you 24/7</p>
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-question-circle me-2"></i>Help Center
+                    </a>
+                    <a href="#" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-envelope me-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Travel Types Chart
+    const travelTypesCtx = document.getElementById('travelTypesChart');
+    if (travelTypesCtx) {
+        new Chart(travelTypesCtx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Flight', 'Train', 'Bus'],
+                datasets: [{
+                    data: [0, 0, 0],
+                    backgroundColor: ['#3498db', '#2ecc71', '#f39c12'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Monthly Bookings Chart
+    const monthlyBookingsCtx = document.getElementById('monthlyBookingsChart');
+    if (monthlyBookingsCtx) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        new Chart(monthlyBookingsCtx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Bookings',
+                    data: [0, 0, 0, 0, 0, 0],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

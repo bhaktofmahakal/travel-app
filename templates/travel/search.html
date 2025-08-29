@@ -1,0 +1,376 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Travel Options - Travel Booking{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Search Travel</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+    }
+    
+    .search-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: -1rem;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .travel-option-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+    
+    .travel-option-card:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .travel-option-card.flight { border-left-color: #3498db; }
+    .travel-option-card.train { border-left-color: #2ecc71; }
+    .travel-option-card.bus { border-left-color: #f39c12; }
+    
+    .route-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .route-arrow {
+        margin: 0 1rem;
+        color: #6c757d;
+    }
+    
+    .price-badge {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+    }
+    
+    .availability-info {
+        font-size: 0.875rem;
+    }
+    
+    .availability-info.limited {
+        color: #dc3545;
+    }
+    
+    .availability-info.available {
+        color: #28a745;
+    }
+    
+    .travel-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 1rem;
+    }
+    
+    .travel-icon.flight { background: #3498db; }
+    .travel-icon.train { background: #2ecc71; }
+    .travel-icon.bus { background: #f39c12; }
+    
+    .filter-sidebar {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Search Header -->
+    <div class="search-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="fw-bold mb-2">Find Your Perfect Journey</h1>
+                    <p class="lead mb-0">Search from thousands of travel options across India</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="d-inline-block bg-white bg-opacity-10 rounded-pill px-3 py-2">
+                        <i class="fas fa-search me-2"></i>
+                        Advanced Search
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search Form -->
+    <div class="search-form">
+        <form method="get" action="{% url 'travel:search' %}">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">From</label>
+                    {{ form.source }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">To</label>
+                    {{ form.destination }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Departure Date</label>
+                    {{ form.departure_date }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Travel Type</label>
+                    {{ form.travel_type }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Advanced Filters (Collapsible) -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false">
+                        <i class="fas fa-filter me-2"></i>More Filters
+                    </button>
+                </div>
+            </div>
+            
+            <div class="collapse mt-3" id="advancedFilters">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Min Price (₹)</label>
+                        {{ form.min_price }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Max Price (₹)</label>
+                        {{ form.max_price }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Min Seats</label>
+                        {{ form.min_seats }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Sort By</label>
+                        {{ form.sort_by }}
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    {% if search_performed %}
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Search Results ({{ total_results }} found)</h5>
+                {% if total_results > 0 %}
+                <small class="text-muted">
+                    Showing {{ results.start_index }}-{{ results.end_index }} of {{ total_results }} results
+                </small>
+                {% endif %}
+            </div>
+            
+            {% if results %}
+                {% for travel in results %}
+                <div class="travel-option-card {{ travel.travel_type|lower }}">
+                    <div class="row align-items-center">
+                        <div class="col-md-1">
+                            <div class="travel-icon {{ travel.travel_type|lower }}">
+                                <i class="fas fa-{% if travel.travel_type == 'FLIGHT' %}plane{% elif travel.travel_type == 'TRAIN' %}train{% else %}bus{% endif %}"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="route-info">
+                                <div>
+                                    <h6 class="mb-0">{{ travel.source }}</h6>
+                                    <small class="text-muted">{{ travel.departure_datetime|date:"g:i A" }}</small>
+                                </div>
+                                <div class="route-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">{{ travel.destination }}</h6>
+                                    <small class="text-muted">{{ travel.arrival_datetime|date:"g:i A" }}</small>
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Duration: {{ travel.duration }}
+                            </small>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div>
+                                <strong>{{ travel.operator_name }}</strong>
+                            </div>
+                            <div class="availability-info {% if travel.available_seats <= 5 %}limited{% else %}available{% endif %}">
+                                <i class="fas fa-users me-1"></i>
+                                {{ travel.available_seats }} seats available
+                            </div>
+                            <small class="text-muted">{{ travel.travel_type|title }}</small>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <div class="price-badge">
+                                ₹{{ travel.base_price|floatformat:0 }}
+                            </div>
+                            <small class="text-muted d-block mt-1">per person</small>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            {% if travel.is_available %}
+                                <a href="{% url 'bookings:create' travel.pk %}" class="btn btn-success btn-sm d-block">
+                                    <i class="fas fa-ticket-alt me-1"></i>Book Now
+                                </a>
+                                <a href="{% url 'travel:detail' travel.pk %}" class="btn btn-outline-primary btn-sm d-block mt-1">
+                                    View Details
+                                </a>
+                            {% else %}
+                                <button class="btn btn-secondary btn-sm d-block" disabled>
+                                    <i class="fas fa-times me-1"></i>Not Available
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav aria-label="Search results pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No travel options found</h5>
+                    <p class="text-muted">Try adjusting your search criteria or check back later for new options.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+        <!-- Popular Routes Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <h5 class="mb-3">Popular Routes</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">Delhi ↔ Mumbai</h6>
+                                <p class="card-text text-muted">Multiple daily flights and trains</p>
+                                <small class="text-success">From ₹2,500</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">Bangalore ↔ Chennai</h6>
+                                <p class="card-text text-muted">Convenient bus and train options</p>
+                                <small class="text-success">From ₹800</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">Hyderabad ↔ Pune</h6>
+                                <p class="card-text text-muted">Fast and affordable travel</p>
+                                <small class="text-success">From ₹1,200</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-focus on source field
+    const sourceField = document.querySelector('input[name="source"]');
+    if (sourceField) {
+        sourceField.focus();
+    }
+    
+    // Date picker enhancement
+    const dateField = document.querySelector('input[name="departure_date"]');
+    if (dateField) {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        dateField.min = tomorrow.toISOString().split('T')[0];
+    }
+});
+</script>
+{% endblock %}

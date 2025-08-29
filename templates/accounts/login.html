@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign In - Travel Booking{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .login-image {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+    
+    .login-form {
+        padding: 3rem 2rem;
+    }
+    
+    .social-login {
+        margin-top: 2rem;
+    }
+    
+    .divider {
+        text-align: center;
+        margin: 2rem 0;
+        position: relative;
+    }
+    
+    .divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #e0e6ed;
+    }
+    
+    .divider span {
+        background: white;
+        padding: 0 1rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container login-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="login-card">
+                <div class="row g-0">
+                    <!-- Left Side - Image/Info -->
+                    <div class="col-md-6 login-image">
+                        <div class="h-100 d-flex flex-column justify-content-center">
+                            <i class="fas fa-plane-departure fa-4x mb-4"></i>
+                            <h2 class="fw-bold mb-3">Welcome Back!</h2>
+                            <p class="lead mb-4">
+                                Sign in to access your bookings, manage your profile, and continue your journey with us.
+                            </p>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                                    <small class="d-block">Secure</small>
+                                </div>
+                                <div class="col-4">
+                                    <i class="fas fa-bolt fa-2x mb-2"></i>
+                                    <small class="d-block">Fast</small>
+                                </div>
+                                <div class="col-4">
+                                    <i class="fas fa-heart fa-2x mb-2"></i>
+                                    <small class="d-block">Trusted</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side - Login Form -->
+                    <div class="col-md-6 login-form">
+                        <div class="mb-4">
+                            <h3 class="fw-bold mb-2">Sign In</h3>
+                            <p class="text-muted">Enter your credentials to access your account</p>
+                        </div>
+                        
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Username or Email
+                                </label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.username.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="id_password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                {{ form.password }}
+                                {% if form.password.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="{% url 'accounts:password_reset' %}" class="text-decoration-none">
+                                    Forgot password?
+                                </a>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+                            
+                            {% if redirect_field_value %}
+                                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                            {% endif %}
+                        </form>
+                        
+                        <div class="divider">
+                            <span>or</span>
+                        </div>
+                        
+                        <div class="social-login">
+                            <button class="btn btn-outline-danger btn-lg w-100 mb-2">
+                                <i class="fab fa-google me-2"></i>Continue with Google
+                            </button>
+                            <button class="btn btn-outline-primary btn-lg w-100">
+                                <i class="fab fa-facebook-f me-2"></i>Continue with Facebook
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <p class="text-muted">
+                                Don't have an account? 
+                                <a href="{% url 'accounts:register' %}" class="text-decoration-none fw-bold">
+                                    Sign up here
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

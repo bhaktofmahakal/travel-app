@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Travel Booking - Book Flights, Trains & Buses Online{% endblock %}
+{% block description %}Professional travel booking platform. Compare and book flights, trains, and buses at the best prices. Easy cancellation, 24/7 support, and instant confirmation.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 120px 0 80px;
+        margin-top: 56px;
+    }
+    
+    .search-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        color: #333;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px 20px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+    }
+    
+    .feature-card {
+        text-align: center;
+        padding: 40px 20px;
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: #667eea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        color: white;
+    }
+    
+    .travel-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .travel-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .travel-type-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 1;
+    }
+    
+    .price-tag {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #28a745;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    Your Journey Starts Here
+                </h1>
+                <p class="lead mb-4">
+                    Book flights, trains, and buses with ease. Compare prices, choose your preferred travel option, and enjoy hassle-free booking experience.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'travel:search' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-search me-2"></i>Search Now
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Sign Up Free
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="search-card">
+                    <h3 class="text-center mb-4">
+                        <i class="fas fa-route me-2"></i>Quick Search
+                    </h3>
+                    {% crispy search_form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_travels }}</div>
+                    <div class="text-muted">Travel Options</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_bookings }}</div>
+                    <div class="text-muted">Happy Customers</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.destinations }}</div>
+                    <div class="text-muted">Destinations</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.operators }}</div>
+                    <div class="text-muted">Travel Partners</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Travel Options -->
+{% if featured_travels %}
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Featured Travel Options</h2>
+            <p class="lead text-muted">Handpicked deals for your next journey</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for travel in featured_travels %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card travel-card h-100">
+                    <div class="position-relative">
+                        <span class="badge bg-primary travel-type-badge">
+                            <i class="fas fa-{% if travel.travel_type == 'FLIGHT' %}plane{% elif travel.travel_type == 'TRAIN' %}train{% else %}bus{% endif %} me-1"></i>
+                            {{ travel.get_travel_type_display }}
+                        </span>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ travel.source }} → {{ travel.destination }}</h5>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-building me-1"></i>{{ travel.operator_name }}
+                            </p>
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-clock me-1"></i>
+                                {{ travel.departure_datetime|date:"M d, Y H:i" }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="price-tag">₹{{ travel.base_price }}</div>
+                                <div class="text-muted small">
+                                    <i class="fas fa-users me-1"></i>{{ travel.available_seats }} seats left
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{% url 'travel:detail' travel.pk %}" class="btn btn-primary btn-sm">
+                                    View Details
+                                </a>
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'bookings:create' travel.pk %}" class="btn btn-success btn-sm">
+                                    Book Now
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'travel:search' %}" class="btn btn-outline-primary btn-lg">
+                View All Travel Options
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Why Choose Us Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Why Choose Travel Booking?</h2>
+            <p class="lead text-muted">Experience the difference with our premium features</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Secure Booking</h4>
+                    <p class="text-muted">Your personal and payment information is protected with industry-standard security measures.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>24/7 Support</h4>
+                    <p class="text-muted">Round-the-clock customer support to assist you with any queries or booking issues.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h4>Easy Cancellation</h4>
+                    <p class="text-muted">Flexible cancellation policies with quick refund processing for your convenience.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <h4>Best Prices</h4>
+                    <p class="text-muted">Compare prices from multiple operators and find the best deals for your journey.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4>Instant Confirmation</h4>
+                    <p class="text-muted">Get instant booking confirmation via email and SMS with your e-ticket.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>Premium Experience</h4>
+                    <p class="text-muted">Enjoy a seamless booking experience with our user-friendly interface and features.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Routes -->
+{% if popular_routes %}
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Popular Routes</h2>
+            <p class="lead text-muted">Most searched and booked destinations</p>
+        </div>
+        
+        <div class="row g-3">
+            {% for route in popular_routes %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-route me-2 text-primary"></i>
+                            {{ route.source }} → {{ route.destination }}
+                        </h6>
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span><i class="fas fa-search me-1"></i>{{ route.search_count }} searches</span>
+                            <span><i class="fas fa-ticket-alt me-1"></i>{{ route.booking_count }} bookings</span>
+                        </div>
+                        <a href="{% url 'travel:search' %}?source={{ route.source }}&destination={{ route.destination }}" 
+                           class="btn btn-sm btn-outline-primary mt-2">
+                            Search Options
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Newsletter Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-3">Stay Updated</h3>
+                <p class="mb-0">Get the latest travel deals and offers directly in your inbox.</p>
+            </div>
+            <div class="col-lg-6">
+                <form class="d-flex gap-2">
+                    <input type="email" class="form-control form-control-lg" placeholder="Enter your email">
+                    <button type="submit" class="btn btn-light btn-lg">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add smooth scrolling and animations
+    $(document).ready(function() {
+        // Animate statistics on scroll
+        $('.stat-number').each(function() {
+            const $this = $(this);
+            const countTo = $this.text();
+            
+            $({ countNum: 0 }).animate({
+                countNum: countTo
+            }, {
+                duration: 2000,
+                easing: 'linear',
+                step: function() {
+                    $this.text(Math.floor(this.countNum));
+                },
+                complete: function() {
+                    $this.text(this.countNum);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ travel.source }} to {{ travel.destination }} - Travel Booking{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'travel:search' %}">Search Travel</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ travel.source }} to {{ travel.destination }}</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .travel-detail-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+    }
+    
+    .travel-info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .route-timeline {
+        position: relative;
+        padding: 2rem 0;
+    }
+    
+    .route-timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 2px;
+        background: linear-gradient(to right, #667eea, #764ba2);
+    }
+    
+    .route-point {
+        text-align: center;
+        position: relative;
+    }
+    
+    .route-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    .route-icon.flight { background: #3498db; }
+    .route-icon.train { background: #2ecc71; }
+    .route-icon.bus { background: #f39c12; }
+    
+    .price-card {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .price-amount {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .availability-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    
+    .availability-badge.available {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+        border: 2px solid #28a745;
+    }
+    
+    .availability-badge.limited {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        border: 2px solid #ffc107;
+    }
+    
+    .availability-badge.sold-out {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        border: 2px solid #dc3545;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .info-item-icon {
+        font-size: 1.5rem;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    
+    .amenities-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .amenity-tag {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.875rem;
+    }
+    
+    .similar-options {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .similar-option-item {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .similar-option-item:hover {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Travel Detail Header -->
+    <div class="travel-detail-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="route-icon {{ travel.travel_type|lower }} me-3">
+                            <i class="fas fa-{% if travel.travel_type == 'FLIGHT' %}plane{% elif travel.travel_type == 'TRAIN' %}train{% else %}bus{% endif %}"></i>
+                        </div>
+                        <div>
+                            <h1 class="fw-bold mb-0">{{ travel.source }} to {{ travel.destination }}</h1>
+                            <p class="mb-0">{{ travel.operator_name }} • {{ travel.get_travel_type_display }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="availability-badge {% if availability_status == 'available' %}available{% elif availability_status == 'limited' %}limited{% else %}sold-out{% endif %}">
+                        {% if availability_status == 'available' %}
+                            <i class="fas fa-check-circle me-2"></i>Available
+                        {% elif availability_status == 'limited' %}
+                            <i class="fas fa-exclamation-triangle me-2"></i>Limited Seats
+                        {% else %}
+                            <i class="fas fa-times-circle me-2"></i>Sold Out
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Route Timeline -->
+            <div class="travel-info-card">
+                <h5 class="fw-bold mb-4">Journey Details</h5>
+                <div class="route-timeline">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="route-point">
+                                <div class="route-icon {{ travel.travel_type|lower }}">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <h6 class="fw-bold">{{ travel.source }}</h6>
+                                <p class="text-muted mb-0">{{ travel.departure_datetime|date:"M d, Y" }}</p>
+                                <p class="fw-bold text-primary">{{ travel.departure_datetime|date:"g:i A" }}</p>
+                                {% if travel.source_code %}
+                                <small class="text-muted">{{ travel.source_code }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="route-icon {{ travel.travel_type|lower }}">
+                                    <i class="fas fa-{% if travel.travel_type == 'FLIGHT' %}plane{% elif travel.travel_type == 'TRAIN' %}train{% else %}bus{% endif %}"></i>
+                                </div>
+                                <p class="fw-bold mb-1">{{ travel.duration }}</p>
+                                <small class="text-muted">Travel Time</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="route-point">
+                                <div class="route-icon {{ travel.travel_type|lower }}">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <h6 class="fw-bold">{{ travel.destination }}</h6>
+                                <p class="text-muted mb-0">{{ travel.arrival_datetime|date:"M d, Y" }}</p>
+                                <p class="fw-bold text-primary">{{ travel.arrival_datetime|date:"g:i A" }}</p>
+                                {% if travel.destination_code %}
+                                <small class="text-muted">{{ travel.destination_code }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Travel Information -->
+            <div class="travel-info-card">
+                <h5 class="fw-bold mb-4">Travel Information</h5>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h6 class="mb-1">Available Seats</h6>
+                        <p class="mb-0 fw-bold">{{ travel.available_seats }}/{{ travel.total_seats }}</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <h6 class="mb-1">Occupancy</h6>
+                        <p class="mb-0 fw-bold">{{ travel.occupancy_percentage }}%</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h6 class="mb-1">Time Until Departure</h6>
+                        <p class="mb-0 fw-bold">{{ travel.time_until_departure }}</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <h6 class="mb-1">Travel ID</h6>
+                        <p class="mb-0 fw-bold">{{ travel.travel_id }}</p>
+                    </div>
+                </div>
+                
+                {% if travel.description %}
+                <div class="mt-4">
+                    <h6 class="fw-bold">Description</h6>
+                    <p class="text-muted">{{ travel.description }}</p>
+                </div>
+                {% endif %}
+                
+                {% if travel.amenities %}
+                <div class="mt-4">
+                    <h6 class="fw-bold">Amenities</h6>
+                    <div class="amenities-list">
+                        {% for amenity in travel.amenities %}
+                        <span class="amenity-tag">{{ amenity }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if travel.baggage_allowance %}
+                <div class="mt-4">
+                    <h6 class="fw-bold">Baggage Allowance</h6>
+                    <p class="text-muted">{{ travel.baggage_allowance }}</p>
+                </div>
+                {% endif %}
+                
+                {% if travel.cancellation_policy %}
+                <div class="mt-4">
+                    <h6 class="fw-bold">Cancellation Policy</h6>
+                    <p class="text-muted">{{ travel.cancellation_policy }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Similar Options -->
+            {% if similar_options %}
+            <div class="similar-options">
+                <h5 class="fw-bold mb-3">Similar Options</h5>
+                {% for option in similar_options %}
+                <div class="similar-option-item">
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <div class="route-icon {{ option.travel_type|lower }} me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                            <i class="fas fa-{% if option.travel_type == 'FLIGHT' %}plane{% elif option.travel_type == 'TRAIN' %}train{% else %}bus{% endif %}"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">{{ option.operator_name }}</h6>
+                            <small class="text-muted">
+                                {{ option.departure_datetime|date:"M d, g:i A" }} - {{ option.arrival_datetime|date:"g:i A" }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold text-primary">₹{{ option.base_price|floatformat:0 }}</div>
+                        <small class="text-muted">{{ option.available_seats }} seats</small>
+                    </div>
+                    <div class="ms-3">
+                        <a href="{% url 'travel:detail' option.pk %}" class="btn btn-outline-primary btn-sm">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Pricing Card -->
+            <div class="price-card">
+                <div class="price-amount">₹{{ travel.base_price|floatformat:0 }}</div>
+                <p class="mb-3">per person</p>
+                
+                {% if booking_allowed %}
+                    <a href="{% url 'bookings:create' travel.pk %}" class="btn btn-light btn-lg w-100">
+                        <i class="fas fa-ticket-alt me-2"></i>Book Now
+                    </a>
+                    <small class="d-block mt-2 opacity-75">
+                        <i class="fas fa-shield-alt me-1"></i>Secure booking
+                    </small>
+                {% else %}
+                    <button class="btn btn-light btn-lg w-100" disabled>
+                        <i class="fas fa-times me-2"></i>
+                        {% if travel.available_seats == 0 %}
+                            Sold Out
+                        {% else %}
+                            Booking Closed
+                        {% endif %}
+                    </button>
+                {% endif %}
+            </div>
+            
+            <!-- Quick Info -->
+            <div class="travel-info-card">
+                <h6 class="fw-bold mb-3">Quick Information</h6>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Travel Type:</span>
+                    <span class="fw-bold">{{ travel.get_travel_type_display }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Operator:</span>
+                    <span class="fw-bold">{{ travel.operator_name }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Duration:</span>
+                    <span class="fw-bold">{{ travel.duration }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Status:</span>
+                    <span class="badge bg-success">{{ travel.get_status_display }}</span>
+                </div>
+                {% if travel.is_featured %}
+                <div class="text-center mt-3">
+                    <span class="badge bg-warning text-dark">
+                        <i class="fas fa-star me-1"></i>Featured
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Contact Support -->
+            <div class="travel-info-card">
+                <h6 class="fw-bold mb-3">Need Help?</h6>
+                <p class="text-muted mb-3">Have questions about this travel option?</p>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-phone me-2"></i>Call Support
+                    </button>
+                    <button class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-comments me-2"></i>Live Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scroll to sections
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Update availability status in real-time (if needed)
+    // This can be enhanced with WebSocket or periodic AJAX calls
+});
+</script>
+{% endblock %}

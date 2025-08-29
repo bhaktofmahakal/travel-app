@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Server Error - Travel Booking{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+        <div class="col-lg-6 text-center">
+            <div class="error-page">
+                <div class="error-number mb-4">
+                    <span class="display-1 fw-bold text-danger">500</span>
+                </div>
+                
+                <div class="error-icon mb-4">
+                    <i class="fas fa-tools fa-4x text-muted"></i>
+                </div>
+                
+                <h2 class="fw-bold mb-3">Server Error</h2>
+                
+                <p class="lead text-muted mb-4">
+                    We're experiencing some technical difficulties. Our team has been notified 
+                    and is working to fix the issue. Please try again later.
+                </p>
+                
+                <div class="mb-4">
+                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </a>
+                    <a href="javascript:location.reload()" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </a>
+                </div>
+                
+                <div class="support-info">
+                    <div class="alert alert-light">
+                        <h6 class="fw-bold mb-2">
+                            <i class="fas fa-headset me-2"></i>Need Immediate Help?
+                        </h6>
+                        <p class="mb-2">Contact our support team:</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="mailto:support@travelbooking.com" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-envelope me-1"></i>Email Support
+                            </a>
+                            <a href="tel:+911234567890" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-phone me-1"></i>Call Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        padding: 2rem;
+    }
+    
+    .error-number {
+        position: relative;
+    }
+    
+    .error-number::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border-radius: 2px;
+    }
+    
+    .support-info {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}
