@@ -32,4 +32,10 @@ python-dateutil==2.8.2
 
 # Static Files (for production)
 # django-storages==1.14.2
-# boto3==1.34.0  # For AWS S3
+# boto3==1.14.0  # For AWS S3
+
+# Production Server
+gunicorn==21.2.0
+
+# Database URL parsing for cloud deployment
+dj-database-url==2.1.0
