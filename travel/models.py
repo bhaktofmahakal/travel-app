@@ -213,7 +213,8 @@ class TravelOperator(models.Model):
     name = models.CharField(max_length=100, unique=True)
     operator_type = models.CharField(max_length=12, choices=OPERATOR_TYPES)
     code = models.CharField(max_length=10, unique=True)  # IATA code for airlines
-    logo = models.ImageField(upload_to='operator_logos/', blank=True, null=True)
+    # Temporarily using CharField for Render deployment (no Pillow needed)
+    logo = models.CharField(max_length=255, blank=True, null=True)
     contact_email = models.EmailField(blank=True, null=True)
     contact_phone = models.CharField(max_length=15, blank=True, null=True)
     website = models.URLField(blank=True, null=True)

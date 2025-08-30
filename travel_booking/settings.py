@@ -171,9 +171,13 @@ SESSION_COOKIE_AGE = 86400  # 24 hours
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Render.com deployment configuration
-import dj_database_url
+try:
+    import dj_database_url
+    DJ_DATABASE_URL_AVAILABLE = True
+except ImportError:
+    DJ_DATABASE_URL_AVAILABLE = False
 
-if 'RENDER' in os.environ:
+if 'RENDER' in os.environ and DJ_DATABASE_URL_AVAILABLE:
     DEBUG = False
     ALLOWED_HOSTS.extend([
         '.onrender.com',

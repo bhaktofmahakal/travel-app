@@ -21,8 +21,9 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
-    profile_picture = models.ImageField(
-        upload_to='profile_pictures/', 
+    # Temporarily using CharField for Render deployment (no Pillow needed)
+    profile_picture = models.CharField(
+        max_length=255, 
         blank=True, 
         null=True,
         default='profile_pictures/default.jpg'
