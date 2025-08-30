@@ -1,0 +1,29 @@
+# Django Framework
+Django==4.2.7
+
+# Django Extensions
+django-crispy-forms==2.1
+crispy-bootstrap5==2024.2
+
+# Database Drivers
+# For MySQL (bonus requirement - commented for Render)
+# mysqlclient==2.2.0
+
+# For PostgreSQL (Render default)
+# psycopg2==2.9.9
+# psycopg2-binary==2.9.9
+
+# Security & Auth
+django-extensions==3.2.3
+
+# Python Utilities
+python-dateutil==2.8.2
+
+# Production Server
+gunicorn==21.2.0
+
+# Database URL parsing for cloud deployment
+dj-database-url==2.1.0
+
+# Testing (optional for production)
+# coverage==7.3.2

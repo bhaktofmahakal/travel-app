@@ -26,8 +26,8 @@ python-decouple==3.8
 # Testing
 coverage==7.3.2
 
-# Utils
-Pillow==10.1.0
+# Utils (commented for Render deployment)
+# Pillow==10.4.0
 python-dateutil==2.8.2
 
 # Static Files (for production)

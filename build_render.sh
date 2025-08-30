@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
-# Build script for Render deployment
+# Minimal build script for Render deployment
 
 set -o errexit  # Exit on error
 
 echo "🚀 Starting build process..."
 
-# Upgrade pip first
-echo "⬆️ Upgrading pip..."
+# Upgrade pip
 pip install --upgrade pip
 
-# Install Python dependencies
+# Install minimal dependencies
 echo "📦 Installing dependencies..."
-pip install -r requirements.txt
+pip install Django==4.2.7
+pip install django-crispy-forms==2.1
+pip install crispy-bootstrap5==2024.2
+pip install django-extensions==3.2.3
+pip install python-dateutil==2.8.2
+pip install gunicorn==21.2.0
+pip install dj-database-url==2.1.0
 
 # Collect static files
 echo "📁 Collecting static files..."
