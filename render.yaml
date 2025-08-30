@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: travel-booking-app
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn travel_booking.wsgi:application"
+    plan: free
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: RENDER
+        value: "1"
+      - key: PYTHON_VERSION
+        value: "3.11.10"

@@ -170,8 +170,31 @@ EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.Em
 SESSION_COOKIE_AGE = 86400  # 24 hours
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+# Render.com deployment configuration
+import dj_database_url
+
+if 'RENDER' in os.environ:
+    DEBUG = False
+    ALLOWED_HOSTS.extend([
+        '.onrender.com',
+        'travel-booking-app-8hwf.onrender.com'  # Replace with your actual domain
+    ])
+    
+    # Database configuration for Render PostgreSQL
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    if DATABASE_URL:
+        DATABASES = {
+            'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+        }
+    
+    # Static files configuration
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    
+    # Disable SSL redirect for Render (Render handles SSL)
+    SECURE_SSL_REDIRECT = False
+
 # Security Settings for Production
-if not DEBUG:
+elif not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
